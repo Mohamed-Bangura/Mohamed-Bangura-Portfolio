@@ -1,0 +1,8 @@
+# Mohamed Bangura Portfolio - Robots.txt
+# Allow search engines to crawl the entire portfolio
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://mohamedbangura.vercel.app/sitemap.xml

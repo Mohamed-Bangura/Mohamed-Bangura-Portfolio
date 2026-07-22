@@ -1,0 +1,23 @@
+{
+  "name": "Mohamed Bangura - Frontend Developer Portfolio",
+  "short_name": "MB Portfolio",
+  "description": "Professional portfolio of Mohamed Bangura, Frontend Developer specializing in responsive websites using HTML, CSS, and JavaScript.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#58a6ff",
+  "icons": [
+    {
+      "src": "/images/logo/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "lang": "en",
+  "dir": "ltr"
+}
