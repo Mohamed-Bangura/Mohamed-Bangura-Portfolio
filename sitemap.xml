@@ -16,20 +16,16 @@
       <image:caption>Mohamed Bangura Logo</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://mohamedbangura.vercel.app/images/projects/savory-bites-home.jpg</image:loc>
-      <image:caption>Savory Bites Restaurant Website - Home Page</image:caption>
-    </image:image>
-    <image:image>
       <image:loc>https://mohamedbangura.vercel.app/images/projects/savory-bites-menu.jpg</image:loc>
-      <image:caption>Savory Bites Restaurant Website - Menu Page</image:caption>
+      <image:caption>Savory Bites Restaurant Website</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://mohamedbangura.vercel.app/images/projects/savory-bites-gallery.jpg</image:loc>
-      <image:caption>Savory Bites Restaurant Website - Gallery</image:caption>
+      <image:loc>https://mohamedbangura.vercel.app/images/projects/pp%20studio%20agency.jpg</image:loc>
+      <image:caption>PP Studio Agency - Creative Digital Agency Website</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://mohamedbangura.vercel.app/images/projects/savory-bites-contact.jpg</image:loc>
-      <image:caption>Savory Bites Restaurant Website - Contact Form</image:caption>
+      <image:loc>https://mohamedbangura.vercel.app/images/projects/johnson's%20academy.jpg</image:loc>
+      <image:caption>Johnson's Academy - Educational Platform Website</image:caption>
     </image:image>
   </url>
 
