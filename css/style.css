@@ -402,77 +402,181 @@ ul {
     background-color: var(--color-bg-secondary);
 }
 
+.container-wide {
+    max-width: 1600px;
+}
+
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: var(--spacing-lg);
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 var(--spacing-md);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    width: 100%;
 }
 
 .project-card {
+    display: flex;
+    flex-direction: column;
     background-color: var(--color-bg-primary);
     border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
+    border-radius: 16px;
     overflow: hidden;
-    padding: 0 var(--spacing-md);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    will-change: transform;
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--color-accent);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(88, 166, 255, 0.35),
+                0 0 28px rgba(88, 166, 255, 0.25);
 }
 
 .project-image {
+    position: relative;
     width: 100%;
-    height: 300px;
+    aspect-ratio: 16 / 9;
     background-color: var(--color-bg-tertiary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
+}
+
+.project-image a {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .project-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: top;
+    transition: transform 0.5s ease;
+}
+
+.project-card:hover .project-image img {
+    transform: scale(1.06);
 }
 
 .project-content {
-    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 28px 28px 24px;
 }
 
 .project-title {
-    font-size: var(--font-size-h3);
-    margin-bottom: var(--spacing-sm);
+    font-size: 1.35rem;
+    margin-bottom: 12px;
     color: var(--color-text-primary);
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.3px;
 }
 
 .project-description {
     color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-md);
     line-height: 1.7;
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
+/* Tech stack badges */
+.project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.tech-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    background-color: rgba(88, 166, 255, 0.1);
+    color: var(--color-accent);
+    border: 1px solid rgba(88, 166, 255, 0.25);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.tech-chip:hover {
+    background-color: rgba(88, 166, 255, 0.2);
+    border-color: var(--color-accent);
+}
+
+/* Project action buttons */
 .project-links {
     display: flex;
-    gap: var(--spacing-sm);
+    gap: 12px;
+    margin-top: auto;
     flex-wrap: wrap;
 }
 
 .project-link {
-    display: inline-block;
-    padding: 8px 20px;
-    background-color: var(--color-bg-tertiary);
-    color: var(--color-text-primary);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--color-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 130px;
+    padding: 12px 20px;
+    border-radius: 10px;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.project-link:hover {
+.project-link-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.project-link-demo {
     background-color: var(--color-accent);
     color: var(--color-bg-primary);
     border-color: var(--color-accent);
+}
+
+.project-link-demo:hover {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    transform: scale(1.04);
+    box-shadow: 0 8px 20px rgba(88, 166, 255, 0.35);
+}
+
+.project-link-github {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+}
+
+.project-link-github:hover {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-accent);
+    transform: scale(1.04);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Projects responsive grid */
+@media (max-width: 1100px) {
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ---------- Services Section ---------- */
@@ -850,34 +954,44 @@ ul {
 /* ---------- Scroll Reveal Animations (JavaScript) ---------- */
 .reveal-element {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .reveal-element.revealed {
-    opacity: 1;
-    transform: translateY(0);
+    animation: fadeUp 0.6s ease forwards;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Staggered animation delays for grid items */
-.skill-category {
-    transition-delay: 0.1s;
+.skill-category.reveal-element.revealed,
+.service-card.reveal-element.revealed {
+    animation-delay: 0.1s;
 }
 
-.skill-category:nth-child(2) {
-    transition-delay: 0.2s;
+.skill-category:nth-child(2).reveal-element.revealed,
+.service-card:nth-child(2).reveal-element.revealed {
+    animation-delay: 0.2s;
 }
 
-.service-card {
-    transition-delay: 0.1s;
+.service-card:nth-child(3).reveal-element.revealed {
+    animation-delay: 0.3s;
 }
 
-.service-card:nth-child(2) {
-    transition-delay: 0.2s;
+.project-card:nth-child(2).reveal-element.revealed {
+    animation-delay: 0.1s;
 }
 
-.service-card:nth-child(3) {
-    transition-delay: 0.3s;
+.project-card:nth-child(3).reveal-element.revealed {
+    animation-delay: 0.2s;
 }
 
 /* ---------- Active Navigation Highlight (JavaScript) ---------- */
@@ -992,8 +1106,13 @@ textarea:focus {
         flex-wrap: wrap;
     }
 
-    .project-image {
-        height: 200px;
+    .project-content {
+        padding: 22px 20px 20px;
+    }
+
+    .project-link {
+        min-width: 120px;
+        padding: 11px 16px;
     }
 
     .footer-copyright {

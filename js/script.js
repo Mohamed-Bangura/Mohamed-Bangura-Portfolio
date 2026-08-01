@@ -80,10 +80,18 @@ function initScrollAnimations() {
         '.project-card, .service-card, .contact-info, .contact-form'
     );
     
-    // Add initial class and observe each element
+    // Add initial class, observe each element, and clean up the
+    // animation classes after completion so hover transforms still work
     animatedElements.forEach(el => {
         el.classList.add('reveal-element');
         observer.observe(el);
+        
+        el.addEventListener('animationend', function handleReveal(e) {
+            if (e.animationName === 'fadeUp') {
+                el.classList.remove('reveal-element', 'revealed');
+                el.removeEventListener('animationend', handleReveal);
+            }
+        });
     });
 }
 
