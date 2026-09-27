@@ -3,29 +3,46 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <url>
-    <loc>https://mohamedbangura.vercel.app/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <loc>https://mohamed-bangura-portfolio.vercel.app/</loc>
+    <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://mohamedbangura.vercel.app/images/profile/profile.jpg</image:loc>
-      <image:caption>Mohamed Bangura - Frontend Developer Profile Photo</image:caption>
+      <image:loc>https://mohamed-bangura-portfolio.vercel.app/images/og-image.png</image:loc>
+      <image:caption>Mohamed Bangura — Frontend Developer &amp; Digital Creative</image:caption>
     </image:image>
+  </url>
+
+  <url>
+    <loc>https://mohamed-bangura-portfolio.vercel.app/projects/savory-bites.html</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
     <image:image>
-      <image:loc>https://mohamedbangura.vercel.app/images/logo/logo.png</image:loc>
-      <image:caption>Mohamed Bangura Logo</image:caption>
+      <image:loc>https://mohamed-bangura-portfolio.vercel.app/images/projects/savory-bites-1200.webp</image:loc>
+      <image:caption>Savory Bites — responsive restaurant website</image:caption>
     </image:image>
+  </url>
+
+  <url>
+    <loc>https://mohamed-bangura-portfolio.vercel.app/projects/pp-studio.html</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
     <image:image>
-      <image:loc>https://mohamedbangura.vercel.app/images/projects/savory-bites.png</image:loc>
-      <image:caption>Savory Bites Restaurant Website</image:caption>
+      <image:loc>https://mohamed-bangura-portfolio.vercel.app/images/projects/pp-studio-agency-1148.webp</image:loc>
+      <image:caption>PP Studio Agency — digital creative agency website</image:caption>
     </image:image>
+  </url>
+
+  <url>
+    <loc>https://mohamed-bangura-portfolio.vercel.app/projects/johnsons-academy.html</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
     <image:image>
-      <image:loc>https://mohamedbangura.vercel.app/images/projects/pp-studio-agency.png</image:loc>
-      <image:caption>PP Studio Agency - Creative Digital Agency Website</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://mohamedbangura.vercel.app/images/projects/johnsons-academy.png</image:loc>
-      <image:caption>Johnson's Academy - Educational Platform Website</image:caption>
+      <image:loc>https://mohamed-bangura-portfolio.vercel.app/images/projects/johnsons-academy-1200.webp</image:loc>
+      <image:caption>Johnson's Academy — digital skills training website</image:caption>
     </image:image>
   </url>
 

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Savory Bites Restaurant Website — Case Study | Mohamed Bangura</title>
+<meta name="description" content="Case study of a five-page responsive restaurant website built with HTML, CSS and JavaScript: menu, gallery, about and contact pages, mobile nav and validated form.">
+<meta name="author" content="Mohamed Bangura">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<link rel="canonical" href="https://mohamed-bangura-portfolio.vercel.app/projects/savory-bites.html">
+
+<meta name="theme-color" content="#2A0A14">
+<meta name="color-scheme" content="light">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Mohamed Bangura">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://mohamed-bangura-portfolio.vercel.app/projects/savory-bites.html">
+<meta property="og:title" content="Savory Bites — responsive restaurant website case study">
+<meta property="og:description" content="A five-page restaurant website: menu, gallery, about and contact, built mobile-first in HTML, CSS and JavaScript.">
+<meta property="og:image" content="https://mohamed-bangura-portfolio.vercel.app/images/projects/savory-bites-1200.webp">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="598">
+<meta property="og:image:alt" content="Homepage of the Savory Bites restaurant website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Savory Bites — responsive restaurant website case study">
+<meta name="twitter:description" content="A five-page restaurant website built mobile-first in HTML, CSS and JavaScript.">
+<meta name="twitter:image" content="https://mohamed-bangura-portfolio.vercel.app/images/projects/savory-bites-1200.webp">
+<meta name="twitter:image:alt" content="Homepage of the Savory Bites restaurant website">
+
+<link rel="icon" href="../favicon/icon-192.png" sizes="192x192" type="image/png">
+<link rel="icon" href="../favicon/favicon.png" sizes="206x218" type="image/png">
+<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png">
+<link rel="manifest" href="../manifest.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+
+<script>document.documentElement.className=document.documentElement.className.replace(/\bno-js\b/,'js');</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": "Savory Bites Restaurant Website",
+  "headline": "A five-page responsive restaurant website",
+  "description": "Multi-page restaurant website with home, menu, gallery, about and contact pages, built mobile-first with HTML, CSS and JavaScript.",
+  "url": "https://mohamed-bangura-portfolio.vercel.app/projects/savory-bites.html",
+  "image": "https://mohamed-bangura-portfolio.vercel.app/images/projects/savory-bites-1200.webp",
+  "dateCreated": "2026-07-17",
+  "dateModified": "2026-07-23",
+  "genre": "Website development",
+  "keywords": "restaurant website, responsive design, multi-page website, HTML, CSS, JavaScript",
+  "programmingLanguage": ["HTML", "CSS", "JavaScript"],
+  "inLanguage": "en",
+  "creator": { "@id": "https://mohamed-bangura-portfolio.vercel.app/#person" },
+  "isPartOf": { "@id": "https://mohamed-bangura-portfolio.vercel.app/#website" },
+  "codeRepository": "https://github.com/Mohamed-Bangura/savory-bites-restaurant"
+}
+</script>
+</head>
+
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html">
+        <span class="brand__mark" aria-hidden="true">MB</span>
+        <span class="brand__text">
+          <span class="brand__name">Mohamed Bangura</span>
+          <span class="brand__role">Frontend Developer</span>
+        </span>
+      </a>
+
+      <button class="nav__toggle js-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
+        <span class="nav__toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="sr-only">Open navigation menu</span>
+      </button>
+
+      <div class="nav__menu" id="primary-menu">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="../index.html#home">Home</a></li>
+          <li><a class="nav__link" href="../index.html#about">About</a></li>
+          <li><a class="nav__link" href="../index.html#projects">Projects</a></li>
+          <li><a class="nav__link" href="../index.html#services">Services</a></li>
+          <li><a class="nav__link" href="../index.html#contact">Contact</a></li>
+        </ul>
+        <div class="nav__cta">
+          <a class="btn btn--primary btn--sm" href="../index.html#contact">Let&rsquo;s Work Together</a>
+        </div>
+        <p class="nav__meta">
+          <a href="mailto:prosperbangura9@gmail.com">prosperbangura9@gmail.com</a>
+          <span>Sierra Leone &middot; Available worldwide</span>
+        </p>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="main-content" tabindex="-1">
+
+  <section class="case__hero">
+    <div class="container">
+      <a class="case__back" href="../index.html#projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        All projects
+      </a>
+      <p class="eyebrow eyebrow--invert">Case study 01 &middot; Restaurant</p>
+      <h1 class="case__title">Savory Bites</h1>
+      <p class="case__lead">
+        A five-page restaurant website where the hardest design problem is simple:
+        a hungry visitor on a phone should be able to reach the menu, look at the
+        food, and find the reservation route in a few seconds.
+      </p>
+      <ul class="case__tags" aria-label="Technologies used">
+        <li class="chip">HTML5</li>
+        <li class="chip">CSS3</li>
+        <li class="chip">JavaScript ES6+</li>
+        <li class="chip">Responsive design</li>
+      </ul>
+    </div>
+
+    <div class="container">
+      <figure class="case__shot">
+        <img src="../images/projects/savory-bites-1200.webp"
+             srcset="../images/projects/savory-bites-480.webp 480w, ../images/projects/savory-bites-800.webp 800w, ../images/projects/savory-bites-1200.webp 1200w, ../images/projects/savory-bites-1777.webp 1777w"
+             sizes="(min-width: 64rem) 62rem, 92vw"
+             width="1777" height="885" loading="eager" decoding="async"
+             alt="Full homepage of the Savory Bites restaurant website, showing the hero section, featured dishes and a reservation call to action">
+        <figcaption>Homepage at desktop width &mdash; hero, featured dishes, and the reservation call to action.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="case__layout">
+        <div class="case__content">
+
+          <h2>Project overview</h2>
+          <p>
+            Savory Bites is a restaurant website built as a small multi-page static
+            site: <b>index, menu, gallery, about and contact</b>. Each page shares
+            one stylesheet and one script, so the header, footer and mobile
+            navigation behave identically everywhere &mdash; a guest moving between
+            pages never has to re-learn the site.
+          </p>
+          <p>
+            The site is deployed and publicly viewable. Nothing about it depends on
+            a build step, a framework or a database, which is why it stays quick on
+            a mobile connection.
+          </p>
+
+          <h2>Purpose and intended audience</h2>
+          <p>
+            The audience is someone deciding where to eat, usually on a phone,
+            often in a hurry. That shapes every decision on the site:
+          </p>
+          <ul>
+            <li><b>Dishes lead the page.</b> Featured dishes appear near the top with photography, because the food is the decision.</li>
+            <li><b>The menu is a separate page</b> rather than a section buried in the homepage, so it can be linked to directly and opened on its own.</li>
+            <li><b>One clear reservation action</b> closes the homepage, with the contact page carrying the enquiry form.</li>
+            <li><b>Gallery and chef imagery</b> give the visitor a sense of the room and the people before they commit.</li>
+          </ul>
+
+          <h2>My role and responsibilities</h2>
+          <p>
+            I designed and built the whole front end &mdash; page structure, layout,
+            responsive behaviour, image strategy and all the JavaScript interaction.
+            There was no separate design-to-development handoff; the layout decisions
+            and the code are the same set of decisions.
+          </p>
+
+          <h2>Technical approach</h2>
+          <p>
+            The build is deliberately conventional, because conventional is
+            maintainable and fast:
+          </p>
+          <ul>
+            <li><b>Semantic HTML5</b> &mdash; <code>header</code>, <code>nav</code>, <code>main</code>, <code>section</code>, <code>footer</code>, with a real heading hierarchy on every page.</li>
+            <li><b>Two stylesheets by concern</b> &mdash; <code>style.css</code> holds the design system and base layout; <code>responsive.css</code> holds the breakpoints on their own. Separating them means a layout change doesn&rsquo;t require hunting through media queries.</li>
+            <li><b>ES6 JavaScript in two files</b> &mdash; <code>main.js</code> for interface behaviour and <code>config.js</code> for site data, so changing a setting doesn&rsquo;t mean editing logic.</li>
+            <li><b>IntersectionObserver</b> for scroll reveals instead of scroll event handlers, which keeps the main thread free.</li>
+            <li><b>No framework and no build step.</b> The site is deployed as static files, so there is no runtime to download and nothing to break between environments.</li>
+          </ul>
+
+          <h2>Key features and design decisions</h2>
+          <ul>
+            <li><b>Mobile menu built in JavaScript</b> with a hamburger control, matching the header layout and closing on selection.</li>
+            <li><b>Scroll-spy navigation</b> that highlights the current page section as the visitor moves down the page.</li>
+            <li><b>Fade-in on scroll</b> for section content, so long pages are easier to scan.</li>
+            <li><b>Lazy-loaded imagery</b> &mdash; food and interior photography is heavy, and the script defers it so the first screen paints quickly.</li>
+            <li><b>Form field validation</b> with inline messages on the contact form, so an enquiry is usable without a page reload.</li>
+            <li><b>Back-to-top control</b> that appears only once the visitor has scrolled far enough to need it.</li>
+            <li><b>Button and image hover treatments</b> applied through shared helpers, so interaction stays consistent across all five pages.</li>
+          </ul>
+
+          <h2>Responsive behaviour</h2>
+          <p>
+            The layout is built down from a single column. Content stacks in a
+            sensible reading order &mdash; hero, then dishes, then supporting
+            sections &mdash; and expands into multi-column arrangements as width
+            allows. The food imagery uses <code>object-fit</code> with controlled
+            crops so a portrait phone never shows a letterboxed strip of a
+            landscape photograph, and the menu grid reflows from one column to
+            several without horizontal scrolling.
+          </p>
+
+          <h2>The finished project</h2>
+          <p>
+            Five coherent pages, consistent navigation, and a working enquiry path
+            &mdash; deployed and live. The source is public, so the markup, the
+            styles and the scripts can all be read directly.
+          </p>
+
+          <nav class="case__nav" aria-label="More case studies">
+            <a class="case__nav-item" href="pp-studio.html">
+              <span>Next case study</span>
+              <b>PP Studio Agency &rarr;</b>
+            </a>
+            <a class="case__nav-item" href="../index.html#contact">
+              <span>Have something similar in mind?</span>
+              <b>Start a project conversation</b>
+            </a>
+          </nav>
+        </div>
+
+        <aside class="case__aside" aria-labelledby="case-facts-title">
+          <h2 id="case-facts-title">Project facts</h2>
+          <dl class="case__facts">
+            <div class="case__fact">
+              <dt>Category</dt>
+              <dd>Restaurant website</dd>
+            </div>
+            <div class="case__fact">
+              <dt>My role</dt>
+              <dd>Design &amp; front-end build</dd>
+            </div>
+            <div class="case__fact">
+              <dt>Built</dt>
+              <dd>2026</dd>
+            </div>
+            <div class="case__fact">
+              <dt>Pages</dt>
+              <dd>Home, Menu, Gallery, About, Contact</dd>
+            </div>
+            <div class="case__fact">
+              <dt>Stack</dt>
+              <dd>HTML5, CSS3, JavaScript (ES6+)</dd>
+            </div>
+            <div class="case__fact">
+              <dt>Hosting</dt>
+              <dd>Vercel</dd>
+            </div>
+          </dl>
+
+          <div class="case__links">
+            <a class="case__link" href="https://savory-bites-restaurant-ten.vercel.app/" target="_blank" rel="noopener noreferrer">
+              Visit live site
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M14 4h6v6M20 4 10 14M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="case__link" href="https://github.com/Mohamed-Bangura/savory-bites-restaurant" target="_blank" rel="noopener noreferrer">
+              View source code
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .96-.31 3.16 1.18a10.9 10.9 0 0 1 5.75 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+            </a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <span class="footer__mark" aria-hidden="true">MB</span>
+        <p class="footer__name">Mohamed Bangura</p>
+        <p class="footer__role">Frontend Developer &amp; Digital Creative</p>
+        <p class="footer__blurb">
+          Building responsive, accessible front-end experiences from Sierra Leone
+          for clients anywhere in the world.
+        </p>
+      </div>
+
+      <div class="footer__col">
+        <h2>Sections</h2>
+        <ul class="footer__links">
+          <li><a href="../index.html#home">Home</a></li>
+          <li><a href="../index.html#about">About</a></li>
+          <li><a href="../index.html#skills">Skills</a></li>
+          <li><a href="../index.html#projects">Projects</a></li>
+          <li><a href="../index.html#services">Services</a></li>
+          <li><a href="../index.html#process">Process</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h2>Elsewhere</h2>
+        <ul class="footer__links">
+          <li><a href="https://github.com/Mohamed-Bangura" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/mohamed-bangura-699253389" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="mailto:prosperbangura9@gmail.com">Email me</a></li>
+          <li><a href="savory-bites.html">Savory Bites</a></li>
+          <li><a href="pp-studio.html">PP Studio</a></li>
+          <li><a href="johnsons-academy.html">Johnson&rsquo;s Academy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>&copy; <span data-year>2026</span> Mohamed Bangura. All rights reserved.</p>
+      <p>Designed &amp; built by Mohamed Bangura.</p>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" type="button" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script src="../js/script.js" defer></script>
+</body>
+</html>

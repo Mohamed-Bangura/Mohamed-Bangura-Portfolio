@@ -1,8 +1,7 @@
-# Mohamed Bangura Portfolio - Robots.txt
-# Allow search engines to crawl the entire portfolio
+# Mohamed Bangura — Frontend Developer Portfolio
+# https://mohamed-bangura-portfolio.vercel.app/
 
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://mohamedbangura.vercel.app/sitemap.xml
+Sitemap: https://mohamed-bangura-portfolio.vercel.app/sitemap.xml

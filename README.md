@@ -1,52 +1,158 @@
 # Mohamed Bangura | Frontend Developer Portfolio
 
-## Project Description
+A static, dependency-free portfolio site for Mohamed Bangura, frontend developer
+based in Sierra Leone. Built to win freelance clients and to support job and
+internship applications.
 
-A professional portfolio website showcasing frontend development skills, completed projects, and professional experience. Built to attract freelance clients and support job and internship applications.
+- **Live site:** <https://mohamed-bangura-portfolio.vercel.app/>
+- **Repository:** <https://github.com/Mohamed-Bangura/Mohamed-Bangura-Portfolio>
 
-## Technology Stack
+> The old `mohamedbangura.vercel.app` address returns 404. The canonical domain
+> is `mohamed-bangura-portfolio.vercel.app`; do not link to the old one.
 
-- **HTML5** - Semantic markup and structure
-- **CSS3** - Styling and responsive design
-- **JavaScript** - Interactive functionality
-- **Git & GitHub** - Version control
-- **VS Code** - Development environment
-- **Vercel** - Deployment platform
+## Stack
+
+No framework, no bundler, no runtime dependencies. The site is plain files that
+Vercel serves as-is.
+
+| Concern | Choice |
+| --- | --- |
+| Markup | HTML5, semantic landmarks, one `h1` per page |
+| Styling | CSS3 custom properties, mobile-first, container-free grid |
+| Behaviour | Vanilla ES2018 in one deferred file, wrapped in an IIFE |
+| Contact | Web3Forms (public access key lives in the markup) |
+| Hosting | Vercel, deployed from `main` |
+| Fonts | Fraunces + Inter from Google Fonts, with system fallbacks |
+
+Dev-only tooling uses `puppeteer-core` to drive a real local Chrome. It never
+ships to the browser.
+
+## Pages
+
+| Path | Purpose |
+| --- | --- |
+| `index.html` | Hero, about, skills, three projects, services, process, contact |
+| `projects/savory-bites.html` | Case study: restaurant site |
+| `projects/pp-studio.html` | Case study: digital agency site |
+| `projects/johnsons-academy.html` | Case study: training-provider site |
+| `404.html` | Branded error page, `noindex` |
+
+## Project structure
+
+```
+.
+├── index.html
+├── 404.html
+├── projects/
+│   ├── savory-bites.html
+│   ├── pp-studio.html
+│   └── johnsons-academy.html
+├── css/style.css
+├── js/script.js
+├── images/
+│   ├── profile/          responsive WebP portrait (320/560/800)
+│   ├── projects/         responsive WebP screenshots
+│   ├── logo/             WebP mark at 96 and 192
+│   ├── og-image.png      1200x630 social preview
+│   └── og-image.jpg      JPEG fallback for older crawlers
+├── favicon/
+├── tools/                dev-only checks, never referenced by the site
+├── robots.txt
+├── sitemap.xml
+├── manifest.webmanifest
+└── googlefaa70da1a191416b.html   Google Search Console verification
+```
+
+## The intro
+
+The homepage opens with a short cinematic brand reveal. It is deliberately
+defensive:
+
+- Shown **once per browsing session**, tracked in `sessionStorage` under
+  `mb-intro-seen`. A repeat visit, a refresh, or a back-navigation goes straight
+  to the content.
+- Skipped entirely when the URL carries a hash, so deep links land on the
+  section the visitor asked for.
+- The markup is `display: none` unless `<html>` has `class="js"`, which is only
+  set by an inline script. **With JavaScript disabled the intro never renders
+  and the page is complete.**
+- A `3200ms` failsafe timer removes it even if an animation callback is lost.
+- `prefers-reduced-motion: reduce` replaces the spin and sweep with a short
+  static hold.
+- The progress bar is an indeterminate sweep. No percentage is ever faked.
+
+Scroll locking is reference counted (`Lock` in `js/script.js`) because the intro
+and the mobile menu both lock the page and overlap during the first second.
+Releasing one must not unlock the other.
+
+## Local development
+
+```bash
+npm install          # dev tooling only
+npm run serve        # http://localhost:4321
+```
+
+## Checks
+
+```bash
+npm test             # runs all three suites below, in order
+```
+
+| Command | What it proves |
+| --- | --- |
+| `npm run verify` | Every local link and asset resolves; per-page title/description lengths; exactly one `h1`; `alt` text present; canonical and OG tags agree; sitemap, robots and manifest are valid; no `.env` or key files committed |
+| `npm run test:browser` | Real Chrome across 9 widths (320–1440): no console errors, no horizontal overflow, intro timing and skip behaviour, reduced motion, no-JS fallback, mobile menu and `Escape`, form validation and no-network-on-invalid, keyboard order and focus rings, case-study pages |
+| `npm run test:design` | WCAG AA contrast on every text node using composited rendered colours, descending type scale, uniform section rhythm, heading order, image decoding and aspect ratio, intro composition, nothing left invisible after scrolling |
+
+`npm run test:design` exists because contrast cannot be judged by eye
+reliably. It resolves translucent backgrounds and gradients properly: an element's
+ancestors are flattened to one opaque base, and only the element's **own**
+backgrounds become separate contrast candidates, because a 0.94-alpha fill
+genuinely hides what is behind it. Text over a photograph is detected by
+geometry and must have a scrim to pass.
+
+Screenshots from the browser run land in `.shots/`, which is git-ignored.
+
+`CHROME_PATH` overrides the browser binary if Chrome is not installed at the
+default Windows location.
+
+## Regenerating image assets
+
+The committed WebP files are the source of truth; there is no asset build step.
+The large original PNG/JPG files were replaced to cut the image payload from
+about 5.4 MB to 846 KB, and the originals were deleted. They are still in git
+history if you ever need to re-cut them:
+
+```bash
+git show 4358260:images/projects/savory-bites.png > /tmp/savory-bites.png
+```
+
+## Contact form
+
+The form posts to Web3Forms using a public access key that is already in
+`index.html`. That key is designed to be public and is not a secret. There is no
+`.env` file and nothing secret belongs in this repository.
+
+Client-side validation covers name, email, project type and message. A honeypot
+field named `_hp` drops bot submissions. Delivery failures fall back to telling
+the visitor to email `prosperbangura9@gmail.com` directly.
+
+## SEO
+
+- Unique title and meta description per page, all within display limits.
+- Canonical, Open Graph and Twitter card tags on every page.
+- JSON-LD `Person` plus `WebSite`, `ItemList` of projects, and `BreadcrumbList`
+  on case studies.
+- `sitemap.xml` lists the four indexable pages; `404.html` is `noindex`.
+- One `og-image` at 1200x630 with a JPEG fallback.
+
+See `SEO-AUDIT.md` for the current state and the outstanding items.
 
 ## Author
 
-**Mohamed Bangura**
-- Frontend Developer
-- Information Technology Student at IPAM
-- Skills: HTML5, CSS3, JavaScript, Responsive Web Design, Git, GitHub, VS Code, Vercel
+**Mohamed Bangura** — frontend developer, Information Technology student at
+IPAM, Sierra Leone.
 
-## Portfolio Sections (Coming in Phase 2)
-
-- **Hero Section** - Introduction and professional tagline
-- **About Section** - Background, education, and experience
-- **Skills Section** - Technical skills and competencies
-- **Projects Section** - Showcase of completed projects
-- **Contact Section** - Contact information and social links
-
-## Project Structure
-
-```
-Mohamed-Bangura-Portfolio/
-├── index.html
-├── css/
-│   └── style.css
-├── js/
-│   └── script.js
-├── images/
-│   ├── profile/
-│   └── projects/
-└── README.md
-```
-
-## Status
-
-🚧 **Phase 1: Project Setup Complete** - Foundation and structure established. Full website design and content coming in Phase 2.
-
----
-
-*Built with clean, professional HTML, CSS, and JavaScript.*
+- Email: <prosperbangura9@gmail.com>
+- LinkedIn: <https://www.linkedin.com/in/mohamed-bangura-699253389>
+- GitHub: <https://github.com/Mohamed-Bangura>

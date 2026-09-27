@@ -1,5 +1,17 @@
 {
+  "name": "mohamed-bangura-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static portfolio site for Mohamed Bangura, frontend developer in Sierra Leone.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "serve": "node tools/serve.js",
+    "verify": "node tools/verify.js",
+    "test:browser": "node tools/browser-test.js",
+    "test:design": "node tools/design-audit.js",
+    "test": "npm run verify && npm run test:browser && npm run test:design"
+  },
   "devDependencies": {
-    "sharp": "^0.35.3"
+    "puppeteer-core": "^25.12.0"
   }
 }

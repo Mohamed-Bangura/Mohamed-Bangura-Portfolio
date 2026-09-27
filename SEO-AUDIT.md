@@ -1,98 +1,109 @@
-# SEO Audit Report - Mohamed Bangura Portfolio
+# SEO Audit — Mohamed Bangura Portfolio
 
-## ✅ Verification Checklist
+Audited against the current build. Canonical domain:
+`https://mohamed-bangura-portfolio.vercel.app/`
 
-### 1. Search Engine Crawling Status
-- [x] **robots.txt** - Present and allows crawling of all public pages
-- [x] **Robots meta tag** - Added `index, follow` to all pages
-- [x] **No blocked pages** - All main sections are indexable
+> The previously documented `https://mohamedbangura.vercel.app/` returns **404**
+> and has been removed from every canonical, Open Graph, sitemap and robots
+> reference. Treat the new domain as the only correct address.
 
-### 2. Metadata Completeness
-- [x] **Unique title tag** - "Mohamed Bangura | Frontend Developer Portfolio"
-- [x] **Unique meta description** - Descriptive and keyword-rich
-- [x] **Author meta tag** - Added to head
-- [x] **Canonical URL** - https://mohamedbangura.vercel.app/
-- [x] **Language attribute** - `lang="en"` on HTML element
+## Status
 
-### 3. Open Graph Implementation
-- [x] og:title - Present
-- [x] og:description - Present
-- [x] og:image - Full URL with https://
-- [x] og:url - Full URL
-- [x] og:type - "website"
-- [x] og:site_name - "Mohamed Bangura Portfolio"
-- [x] og:locale - "en_US"
-- [x] og:image:alt - Added for accessibility
+### Crawling
 
-### 4. Twitter Card Metadata
-- [x] twitter:card - "summary_large_image"
-- [x] twitter:title - Present
-- [x] twitter:description - Present
-- [x] twitter:image - Full URL
-- [x] twitter:image:alt - Added
-- [x] twitter:site & twitter:creator - Added
+- [x] `robots.txt` allows all public pages and points at the live sitemap
+- [x] `<meta name="robots" content="index, follow, max-image-preview:large, …">`
+- [x] `404.html` is `noindex, follow`
+- [x] `sitemap.xml` lists exactly the four indexable pages
+- [x] Google Search Console verification file preserved
 
-### 5. Schema.org JSON-LD Structured Data
-- [x] **Person schema** - Mohamed Bangura profile
-- [x] **WebSite schema** - Site information
-- [x] **WebPage schema** - Page details
-- [x] **CreativeWork schema** - Project details
-- [x] All schemas include proper @context and @type
+### Metadata
 
-### 6. HTML Structure & Accessibility
-- [x] **Semantic HTML5 elements** - header, nav, main, section, article, footer
-- [x] **One H1 per page** - Hero section has H1
-- [x] **Correct heading hierarchy** - H1 > H2 > H3
-- [x] **Skip to content link** - Added for keyboard navigation
-- [x] **aria-label attributes** - Added to navigation and social links
-- [x] **aria-labelledby** - Added to sections
-- [x] **aria-live** - Added to form status
-- [x] **aria-required** - Added to form inputs
-- [x] **role attributes** - Added to nav and footer
-- [x] **Focus indicators** - CSS styles for keyboard navigation
-- [x] **sr-only class** - For screen reader only text
+- [x] Unique `<title>` per page, all at or under 60 characters
+- [x] Unique meta description per page, 132–175 characters
+- [x] `lang="en"`, `author`, and `theme-color`
+- [x] Self-referencing canonical on every page, absolute `https://`
+- [x] Canonical and `og:url` agree on every page
 
-### 7. Image Optimization
-- [x] **Alt attributes** - All images have descriptive alt text
-- [x] **Image dimensions** - width and height attributes added
-- [x] **Lazy loading** - Added to below-fold images
-- [x] **Preload critical image** - profile.jpg preloaded
+### Open Graph and Twitter
 
-### 8. Performance Optimizations
-- [x] **defer attribute** - JavaScript loaded with defer
-- [x] **Preload CSS** - style.css preloaded
-- [x] **Preload hero image** - profile image preloaded
-- [x] **Font optimization** - System font stack used (no external fonts)
+- [x] `og:title`, `og:description`, `og:image`, `og:url`, `og:type`, `og:site_name`, `og:locale`
+- [x] `og:image:width` 1200 and `og:image:height` 630
+- [x] `og:image:alt`
+- [x] `twitter:card` = `summary_large_image`, plus title, description, image and `image:alt`
+- [x] One 1200x630 `og-image.png` with a `.jpg` fallback for older crawlers
 
-### 9. SEO Files Created
-- [x] **sitemap.xml** - Present at root level
-- [x] **robots.txt** - Present at root level
-- [x] **manifest.webmanifest** - For PWA support
+### Structured data
 
-### 10. Vercel Deployment Readiness
-- [x] **All routes work** - Single-page application with anchors
-- [x] **No broken links** - All external links use correct URLs
-- [x] **HTTPS URLs** - All absolute URLs use https://
-- [x] **Static assets** - All files are static and accessible
+- [x] `Person` — name, job title, email, `sameAs` profiles, `knowsAbout`
+- [x] `WebSite` with `SearchAction`
+- [x] `ItemList` of the three projects, each with its live URL and repository
+- [x] `BreadcrumbList` on each case study
+- [ ] **Verify in the Rich Results Test.** The JSON-LD parses and the ids
+      resolve, but it has not been checked against Google's validator.
 
-## 📊 SEO Score Improvements
+### HTML structure and accessibility
 
-| Category | Before | After |
-|----------|--------|-------|
-| Meta Tags | 60% | 100% |
-| Open Graph | 70% | 100% |
-| Twitter Cards | 50% | 100% |
-| Schema Markup | 0% | 100% |
-| Accessibility | 75% | 90%+ |
-| Performance | 70% | 85%+ |
+- [x] Semantic landmarks: `header`, `nav`, `main`, `section`, `article`, `footer`
+- [x] Exactly one `h1` per page
+- [x] No skipped heading levels — machine-checked across all 28 headings
+- [x] Skip link, revealed on focus
+- [x] `aria-labelledby` on every section, `aria-current` on the active nav link
+- [x] Form status is `aria-live`; invalid fields get `aria-invalid` plus
+      `aria-describedby` error text, and focus moves to the first bad field
+- [x] Visible focus ring on every interactive element
+- [x] Mobile menu is a real `aria-expanded` toggle, closes on `Escape`,
+      on outside click, and on choosing a destination
+- [x] Every text node meets WCAG AA contrast — machine-checked against
+      composited rendered colours, not estimated by eye
 
-## 🔍 Recommendations for Future Enhancement
-1. Create and add a professional 1200x630 Open Graph preview image
-2. Consider adding more specific schemas for projects (multiple CreativeWork entries)
-3. Add structured data for services offered
-4. Consider adding breadcrumbs schema if page structure expands
-5. Monitor Core Web Vitals after deployment
+### Images and performance
+
+- [x] `alt` text on every image, machine-checked
+- [x] Explicit `width`/`height` on every image, so nothing shifts while loading
+- [x] `loading="lazy"` on below-fold images, `fetchpriority="high"` on the portrait
+- [x] `srcset` and `sizes` on the portrait and project screenshots
+- [x] WebP throughout, 846 KB total, down from about 5.4 MB
+- [x] `defer` on the single script
+- [x] No render-blocking JavaScript, no framework
+- [ ] **Core Web Vitals are unmeasured.** No Lighthouse or field data has been
+      collected against the deployed URL. This is the main open gap.
+
+### Deployment
+
+- [x] Fully static, no server runtime
+- [x] All internal links resolve — `npm run verify` checks every local reference
+- [x] All project links point at verified live URLs and real repositories
+- [ ] **Post-deploy checks pending:** confirm the new build is live, re-submit
+      the sitemap in Search Console, and request indexing for the three new
+      case-study URLs.
+
+## Known gaps
+
+1. **No Core Web Vitals data.** Run Lighthouse against the deployed URL, then
+   watch the Search Console Core Web Vitals report for real-user data.
+2. **Rich Results Test not run** on the JSON-LD.
+3. **Case-study `BreadcrumbList` ids** reference the homepage graph. If a case
+   study is ever shared without the homepage in the same crawl, switch those
+   references to absolute URLs.
+4. **No `sitemap` `lastmod` accuracy** beyond the build date. Worth refreshing
+   only when content actually changes.
+5. **No analytics.** Deliberate: no third-party scripts, nothing to consent to.
+   If page views are wanted later, a privacy-respecting option should be
+   chosen deliberately rather than added by default.
+6. **Case studies are not individually targeted for local search terms.** The
+   three pages are branded case studies, not location landing pages.
+
+## Verification tooling
+
+| Command | Covers |
+| --- | --- |
+| `npm run verify` | Link and asset resolution, title/description lengths, `h1` count, `alt` presence, canonical/OG agreement, sitemap, robots, manifest, secret-file scan |
+| `npm run test:browser` | Console errors, overflow at 9 widths, intro behaviour, reduced motion, no-JS, mobile menu, form validation, keyboard access |
+| `npm run test:design` | WCAG AA contrast, type scale, section rhythm, heading order, image decoding, visibility sweep |
+
+Run `npm test` for all three.
 
 ---
-*Last Updated: 2026-01-15*
-*Site: https://mohamedbangura.vercel.app/*
+
+*Audited 2026-09-27 against the current build.*
