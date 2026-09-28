@@ -170,6 +170,14 @@ function _measurable(el) {
   if (cs.visibility === 'hidden' || cs.display === 'none') return false;
   if (el.closest('[hidden]') || el.closest('.hp-field')) return false;
   if (el.classList.contains('skip-link')) return false;
+  /* Intentionally invisible text: decorative watermarks drawn with a text
+     stroke and a transparent fill. Nothing to contrast against. */
+  const m = cs.color.match(/rgba?\(([^)]+)\)/);
+  if (m) {
+    const parts = m[1].split(',').map((n) => parseFloat(n));
+    if (parts.length === 4 && parts[3] === 0) return false;
+  }
+  if (el.closest('[aria-hidden="true"]')) return false;
   const r = el.getBoundingClientRect();
   return r.width > 0 && r.height > 0;
 }
@@ -290,13 +298,13 @@ async function _settle() {
         if (prev && n > prev + 1) skips.push(h.tagName + ' "' + h.textContent.trim().slice(0, 20) + '"');
         prev = n; });
       const rhythm = {};
-      ['#about', '#skills', '#projects', '#services', '#process', '#contact'].forEach((id) => {
+      ['#about', '#services', '#work', '#skills', '#process', '#contact'].forEach((id) => {
         const e = document.querySelector(id);
         if (e) rhythm[id] = Math.round(parseFloat(getComputedStyle(e).paddingTop));
       });
       return {
-        h1: px('.hero__title'), h2: px('.section-head h2'), h3: px('.project__title'),
-        h4: px('.process__step-title') || px('.skill-group__title'),
+        h1: px('.hero__title'), h2: px('.section-head h2'), h3: px('.work__title'),
+        h4: px('h4'),
         body: px('body'), lead: px('.lead'), small: px('.chip'),
         rhythm, skips, h1n: document.querySelectorAll('h1').length,
         n: headings.length,
@@ -314,10 +322,12 @@ async function _settle() {
     info('families: ' + d.families.join(', ') + '   max-width ' + d.maxw);
     info('section padding-top: ' + JSON.stringify(d.rhythm));
 
-    const scale = [d.h1, d.h2, d.h3, d.h4, d.body, d.small];
-    scale.every((v) => typeof v === 'number' && v > 0) && scale.every((v, i) => i === 0 || v <= scale[i - 1])
+    /* Only levels the page actually uses, so a missing h4 does not read as a
+       broken scale. */
+    const scale = [d.h1, d.h2, d.h3, d.h4, d.body, d.small].filter((v) => typeof v === 'number' && v > 0);
+    scale.length >= 5 && scale.every((v, i) => i === 0 || v <= scale[i - 1])
       ? pass('type scale descends monotonically: ' + scale.join(' >= '))
-      : fail('type scale not descending: ' + JSON.stringify(scale));
+      : fail('type scale not descending: ' + JSON.stringify([d.h1, d.h2, d.h3, d.h4, d.body, d.small]));
 
     const pads = Object.values(d.rhythm);
     pads.length === 6 && new Set(pads).size === 1
@@ -386,7 +396,7 @@ async function _settle() {
   {
     const p = await page(390, 844);
     await p.goto(base + '/', { waitUntil: 'domcontentloaded' });
-    await new Promise((r) => setTimeout(r, 620));
+    await new Promise((r) => setTimeout(r, 1200));
     const d = await ev(p, `
       const el = document.getElementById('intro');
       if (!el) return { missing: true };
@@ -394,23 +404,25 @@ async function _settle() {
         return { w: Math.round(r.width), h: Math.round(r.height), top: Math.round(r.top),
                  left: Math.round(r.left) }; };
       const letters = el.querySelector('.intro__letters');
-      const outer = el.querySelector('.intro__ring-outer');
-      const arc = el.querySelector('.intro__arc');
+      const mark = el.querySelector('.intro__mark');
       const ring = el.querySelector('.intro__ring');
       const bar = el.querySelector('.intro__progress');
+      const skip = el.querySelector('[data-intro-skip]');
       const cs = getComputedStyle(el);
       return {
-        visible: el.classList.contains('is-visible'),
+        visible: el.classList.contains('is-active'),
         opacity: cs.opacity, bg: cs.backgroundColor,
         onScreen: box(el),
         letters: letters && { text: letters.textContent.trim(),
           fontSize: getComputedStyle(letters).fontSize,
           family: getComputedStyle(letters).fontFamily.split(',')[0].replace(/["']/g, ''), ...box(letters) },
-        outer: outer && { anim: getComputedStyle(outer).animationName, ...box(outer) },
-        arc: arc && { anim: getComputedStyle(arc).animationName, ...box(arc) },
+        mark: mark && { anim: getComputedStyle(mark).animationName, ...box(mark) },
         ring: ring && { ...box(ring) },
-        bar: bar && { box: box(bar), after: getComputedStyle(bar, '::after').animationName,
-                      before: getComputedStyle(bar, '::before').animationName },
+        bar: bar && { box: box(bar), anim: getComputedStyle(bar).animationName },
+        skip: skip && { text: skip.textContent.trim(),
+          vis: getComputedStyle(skip).visibility,
+          h: Math.round(skip.getBoundingClientRect().height),
+          ariaHiddenAncestor: !!skip.closest('[aria-hidden="true"]') },
         name: box(el.querySelector('.intro__name')),
         role: box(el.querySelector('.intro__role')),
         statement: box(el.querySelector('.intro__statement'))
@@ -418,22 +430,26 @@ async function _settle() {
 
     if (d.missing) fail('intro markup missing');
     else {
-      d.visible ? pass('intro visible at ~620ms, opacity ' + d.opacity) : fail('intro not visible');
+      d.visible ? pass('intro active at ~1.2s, opacity ' + d.opacity) : fail('intro not active');
       d.onScreen && d.onScreen.top === 0 && d.onScreen.h >= 800
         ? pass('intro covers the whole viewport')
         : fail('intro does not cover the viewport: ' + JSON.stringify(d.onScreen));
       d.letters && d.letters.w > 0
         ? pass('monogram "' + d.letters.text + '" ' + d.letters.fontSize + ' in ' + d.letters.family)
         : fail('monogram not rendered');
-      d.outer && d.outer.w > 0 ? pass('outer ring ' + d.outer.w + 'px, anim=' + d.outer.anim) : fail('outer ring missing');
-      d.arc && d.arc.w > 0 ? pass('orbital arc ' + d.arc.w + 'px, anim=' + d.arc.anim) : fail('arc missing');
-      d.ring && d.ring.w > 0 ? pass('inner ring ' + d.ring.w + 'px') : fail('inner ring missing');
+      d.mark && d.mark.w > 0
+        ? pass('monogram mark ' + d.mark.w + 'px, anim=' + d.mark.anim)
+        : fail('monogram mark missing');
+      d.ring && d.ring.w > 0 ? pass('ring ' + d.ring.w + 'px') : fail('ring missing');
       d.bar && d.bar.box.w > 0
-        ? pass('progress bar ' + d.bar.box.w + 'px wide, anim=' + d.bar.after)
-        : fail('progress bar missing');
-      d.bar && d.bar.after && d.bar.after !== 'none'
-        ? pass('bar animates (indeterminate sweep, no fake percentage)')
-        : fail('bar animation = ' + (d.bar && d.bar.after));
+        ? pass('progress line ' + d.bar.box.w + 'px wide, anim=' + d.bar.anim)
+        : fail('progress line missing');
+      d.bar && d.bar.anim && d.bar.anim !== 'none'
+        ? pass('progress line animates (indeterminate sweep, no fake percentage)')
+        : fail('progress line animation = ' + (d.bar && d.bar.anim));
+      d.skip && d.skip.vis === 'visible' && d.skip.h >= 44 && !d.skip.ariaHiddenAncestor
+        ? pass('skip control "' + d.skip.text + '" visible, ' + d.skip.h + 'px, outside aria-hidden')
+        : fail('skip control problem: ' + JSON.stringify(d.skip));
       /* text block order and spacing */
       const tops = [d.letters, d.name, d.role, d.statement].filter(Boolean).map((x) => x.top);
       tops.every((t, i) => i === 0 || t > tops[i - 1])
@@ -490,16 +506,17 @@ async function _settle() {
     await p.close();
   }
 
-  /* ---------------- G. dark section contrast sanity ---------------- */
-  console.log('\n[G] Dark section (services) contrast');
+  /* ---------------- G. section contrast sanity (dark and light) ------------ */
+  console.log('\n[G] Section contrast: dark (work, contact) and light (services, process)');
   {
     const p = await page(1280, 900);
     await open(p, '/');
-    const dark = await ev(p, HELPERS + `
-      const sec = document.getElementById('services');
+
+    const scan = (id) => ev(p, HELPERS + `
+      const sec = document.getElementById('${id}');
       if (!sec) return null;
       const out = [];
-      sec.querySelectorAll('h2,h3,p,li,a,span').forEach((el) => {
+      sec.querySelectorAll('h2,h3,p,li,a,span,b').forEach((el) => {
         if (!_measurable(el)) return;
         if (parseFloat(getComputedStyle(el).opacity) < 0.95) return;
         if (!_ownText(el)) return;
@@ -511,14 +528,16 @@ async function _settle() {
           need: (size >= 24 || (size >= 18.66 && weight >= 700)) ? 3 : 4.5 });
       });
       return { rows: out, bg: getComputedStyle(sec).backgroundColor };`);
-    if (!dark) fail('services section not found');
-    else {
-      const bad = dark.rows.filter((r) => r.c < r.need);
-      info('services background ' + dark.bg + ', ' + dark.rows.length + ' text nodes checked');
+
+    for (const id of ['work', 'contact', 'services', 'process']) {
+      const res = await scan(id);
+      if (!res) { fail(id + ' section not found'); continue; }
+      const bad = res.rows.filter((r) => r.c < r.need);
+      info(id + ' background ' + res.bg + ', ' + res.rows.length + ' text nodes checked');
       bad.length
-        ? fail('services — ' + bad.length + ' below AA: ' +
+        ? fail(id + ' — ' + bad.length + ' below AA: ' +
           [...new Set(bad.map((b) => b.c + ':1 "' + b.t + '"'))].slice(0, 8).join(', '))
-        : pass('services — all ' + dark.rows.length + ' text nodes meet AA on the dark background');
+        : pass(id + ' — all ' + res.rows.length + ' text nodes meet AA');
     }
     await p.close();
   }

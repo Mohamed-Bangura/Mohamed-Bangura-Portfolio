@@ -15,7 +15,9 @@
 
    Hard rules honoured here
    - Every module is optional: one failure never blocks the page.
-   - The intro is decorative, aria-hidden, and always removed from the DOM.
+   - The intro's decorative layer is aria-hidden; its skip control is not,
+     and it is always reachable by keyboard.
+   - The intro is always removed from the DOM, and never traps focus.
    - No fake loading percentage is ever displayed.
    ========================================================================== */
 (function () {
@@ -85,13 +87,17 @@
   })();
 
   /* ---------------------------------------------------------------- 02 */
-  /* Cinematic brand intro.
+  /* Cinematic brand intro, roughly five seconds.
+     Timeline: 0-1s monogram, 1-2s name and role, 2-4s statement,
+     4-5s transition out. The decorative layer is aria-hidden in the markup;
+     the skip control sits outside it, so it stays in the tab order.
      The markup is display:none unless <html class="js">, so a script failure
      can never leave a blank screen.                                     */
   var Intro = {
-    EXIT_AT: 850,      /* ms before the reveal starts           */
-    LIFETIME: 3200,    /* failsafe: force-remove no matter what */
-    STILL_MS: 520,     /* reduced-motion static hold            */
+    EXIT_AT: 4300,     /* ms before the transition out starts          */
+    LIFETIME: 6000,    /* failsafe: force-remove no matter what        */
+    FADE_MS: 700,      /* ms the transition out lasts                  */
+    STILL_MS: 900,     /* reduced-motion static hold                   */
 
     run: function () {
       var el = $('#intro');
@@ -111,25 +117,36 @@
         return;
       }
 
-      el.setAttribute('aria-hidden', 'true');
+      Lock.hold('intro');
+
+      /* Skip control: a real button, plus Escape for anyone who reaches
+         for the keyboard without reading the corner of the screen. */
+      var skipBtn = $('[data-intro-skip]', el);
+      if (skipBtn) {
+        skipBtn.addEventListener('click', function () {
+          Intro.destroy(el);
+        });
+      }
+
+      document.addEventListener('keydown', function onKey(e) {
+        if (e.key !== 'Escape') return;
+        document.removeEventListener('keydown', onKey);
+        Intro.destroy(el);
+      });
 
       if (REDUCED.matches) {
         /* Brief, calm brand reveal. No ring spin, no sweeping bar. */
-        Lock.hold('intro');
-        el.classList.add('is-visible');
+        el.classList.add('is-active');
         setTimeout(function () {
           Intro.destroy(el);
         }, Intro.STILL_MS);
         return;
       }
 
-      Lock.hold('intro');
-
-      /* Two frames: one to apply display, one to let the transition run. */
+      /* One frame, so the display change and the animation timeline are
+         committed together and nothing flashes. */
       requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          el.classList.add('is-visible');
-        });
+        el.classList.add('is-active');
       });
 
       setTimeout(function () {
@@ -149,14 +166,14 @@
 
       /* Never shown (skipped, or a failure before the first frame):
          drop it at once, there is nothing to fade out. */
-      if (!el.classList.contains('is-visible')) {
+      if (!el.classList.contains('is-active')) {
         remove();
         return;
       }
 
       el.classList.add('is-leaving');
       if (REDUCED.matches) remove();
-      else window.setTimeout(remove, 620);
+      else window.setTimeout(remove, Intro.FADE_MS);
     }
   };
 

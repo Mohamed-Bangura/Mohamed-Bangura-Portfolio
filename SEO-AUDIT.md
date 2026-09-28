@@ -32,6 +32,12 @@ Audited against the current build. Canonical domain:
 - [x] `og:image:alt`
 - [x] `twitter:card` = `summary_large_image`, plus title, description, image and `image:alt`
 - [x] One 1200x630 `og-image.png` with a `.jpg` fallback for older crawlers
+- [x] Share image regenerated from the site's own palette and webfonts
+      (`node tools/make-og-image.js`), so it carries the new title and hero
+      message rather than the previous identity
+- [ ] **Preview the share card in a real debugger.** The generated file is
+      verified 1200x630, no overflow, all text at WCAG AA, but it has not been
+      eyeballed in the LinkedIn/X/Facebook card previewers
 
 ### Structured data
 
@@ -41,12 +47,11 @@ Audited against the current build. Canonical domain:
 - [x] `BreadcrumbList` on each case study
 - [ ] **Verify in the Rich Results Test.** The JSON-LD parses and the ids
       resolve, but it has not been checked against Google's validator.
-
 ### HTML structure and accessibility
 
 - [x] Semantic landmarks: `header`, `nav`, `main`, `section`, `article`, `footer`
 - [x] Exactly one `h1` per page
-- [x] No skipped heading levels — machine-checked across all 28 headings
+- [x] No skipped heading levels — machine-checked across all 22 headings
 - [x] Skip link, revealed on focus
 - [x] `aria-labelledby` on every section, `aria-current` on the active nav link
 - [x] Form status is `aria-live`; invalid fields get `aria-invalid` plus
@@ -56,6 +61,11 @@ Audited against the current build. Canonical domain:
       on outside click, and on choosing a destination
 - [x] Every text node meets WCAG AA contrast — machine-checked against
       composited rendered colours, not estimated by eye
+- [x] The ~5s intro is escapable: a real skip button outside the `aria-hidden`
+      decorative subtree, `Escape` to dismiss, plus reduced-motion, deep-link,
+      repeat-session and failsafe handling
+- [x] Interactive targets are at least 44px on touch widths
+- [x] Form controls are 16px, so iOS Safari does not zoom on focus
 
 ### Images and performance
 
@@ -74,24 +84,33 @@ Audited against the current build. Canonical domain:
 - [x] Fully static, no server runtime
 - [x] All internal links resolve — `npm run verify` checks every local reference
 - [x] All project links point at verified live URLs and real repositories
-- [ ] **Post-deploy checks pending:** confirm the new build is live, re-submit
-      the sitemap in Search Console, and request indexing for the three new
-      case-study URLs.
+- [ ] **Post-deploy checks pending:** confirm the cinematic redesign is live on
+      the canonical domain, re-submit the sitemap in Search Console, and request
+      indexing for the three case-study URLs.
 
 ## Known gaps
 
 1. **No Core Web Vitals data.** Run Lighthouse against the deployed URL, then
    watch the Search Console Core Web Vitals report for real-user data.
 2. **Rich Results Test not run** on the JSON-LD.
-3. **Case-study `BreadcrumbList` ids** reference the homepage graph. If a case
+3. **The social share card has not been eyeballed** in a real card previewer.
+   It is generated and measured, but a human should confirm how it actually
+   crops on LinkedIn, X and Facebook.
+4. **No WhatsApp contact.** Only the email address, LinkedIn and GitHub are
+   published, because those are the only verified channels. A WhatsApp link
+   should be added only once a real number is confirmed, not guessed.
+5. **Web3Forms delivery is unconfirmed.** The client-side integration and
+   validation are verified, but no message has been confirmed end to end
+   against the inbox.
+6. **Case-study `BreadcrumbList` ids** reference the homepage graph. If a case
    study is ever shared without the homepage in the same crawl, switch those
    references to absolute URLs.
-4. **No `sitemap` `lastmod` accuracy** beyond the build date. Worth refreshing
+7. **No `sitemap` `lastmod` accuracy** beyond the build date. Worth refreshing
    only when content actually changes.
-5. **No analytics.** Deliberate: no third-party scripts, nothing to consent to.
+8. **No analytics.** Deliberate: no third-party scripts, nothing to consent to.
    If page views are wanted later, a privacy-respecting option should be
    chosen deliberately rather than added by default.
-6. **Case studies are not individually targeted for local search terms.** The
+9. **Case studies are not individually targeted for local search terms.** The
    three pages are branded case studies, not location landing pages.
 
 ## Verification tooling
@@ -99,11 +118,11 @@ Audited against the current build. Canonical domain:
 | Command | Covers |
 | --- | --- |
 | `npm run verify` | Link and asset resolution, title/description lengths, `h1` count, `alt` presence, canonical/OG agreement, sitemap, robots, manifest, secret-file scan |
-| `npm run test:browser` | Console errors, overflow at 9 widths, intro behaviour, reduced motion, no-JS, mobile menu, form validation, keyboard access |
-| `npm run test:design` | WCAG AA contrast, type scale, section rhythm, heading order, image decoding, visibility sweep |
+| `npm run test:browser` | Console errors, overflow at 9 widths, intro timing and every skip path, reduced motion, no-JS, mobile menu, 44px tap targets, form validation, keyboard access, exact nav and section order, required copy |
+| `npm run test:design` | WCAG AA contrast, type scale, section rhythm, heading order, image decoding, intro composition, visibility sweep, per-section contrast on both the dark and light grounds |
 
-Run `npm test` for all three.
+Run `npm test` for all three. Current state: **0 failures in all three suites.**
 
 ---
 
-*Audited 2026-09-27 against the current build.*
+*Audited 2026-09-28 against the cinematic redesign.*

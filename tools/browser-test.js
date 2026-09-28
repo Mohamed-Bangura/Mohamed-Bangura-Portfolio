@@ -58,6 +58,44 @@ async function main() {
     return page;
   }
 
+  /* The intro is a full-screen overlay for ~5s. Any test that has to click,
+     scroll or read layout must wait it out first, otherwise the click lands on
+     the intro instead of the control underneath. */
+  const settle = (p) => p.waitForFunction(() => !document.getElementById('intro'), { timeout: 9000 });
+
+  /* The header is sticky, so a control scrolled flush to the top of the
+     viewport can end up underneath it, and a click at that point would be
+     delivered to the header instead. Centre the target, confirm it really is
+     the topmost element at its own centre, and only then click. Trying a few
+     offsets keeps this robust instead of depending on where the browser
+     happens to put the element. */
+  const clickSafely = async (p, selector) => {
+    for (const nudge of [0, 60, 120, -60]) {
+      const hit = await p.evaluate((sel, dy) => {
+        const el = document.querySelector(sel);
+        if (!el) return 'missing';
+        /* Sit the target a little below centre, clear of the sticky header. */
+        el.scrollIntoView({ block: 'center', behavior: 'instant' });
+        if (dy) window.scrollBy(0, dy);
+        const b = el.getBoundingClientRect();
+        const x = b.left + b.width / 2;
+        const y = b.top + b.height / 2;
+        const top = document.elementFromPoint(x, y);
+        if (!top) return 'offscreen';
+        if (top === el || el.contains(top) || top.contains(el)) return 'ok';
+        return 'covered by ' + (top.id || top.className || top.tagName);
+      }, selector, nudge);
+      if (hit === 'ok') {
+        await p.click(selector);
+        return true;
+      }
+      if (hit === 'missing') throw new Error('clickSafely: no element for ' + selector);
+    }
+    /* Nothing was provably on top, so click and let the assertions judge. */
+    await p.click(selector);
+    return false;
+  };
+
   /* ---------------- 1. Console / page errors across all pages -------------- */
   console.log('\n[1] Console + page errors (desktop 1280, JS on)');
   {
@@ -82,7 +120,7 @@ async function main() {
     for (const w of WIDTHS) {
       const p = await newPage({ width: w, height: 900 });
       await p.goto(base + '/', { waitUntil: 'networkidle2' });
-      await new Promise((r) => setTimeout(r, 2000));
+      await settle(p);
       await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
       await new Promise((r) => setTimeout(r, 700));
 
@@ -111,7 +149,7 @@ async function main() {
           if (r.width === 0 || r.height === 0) return;
           if (getComputedStyle(el).visibility === 'hidden') return;
           if (el.closest('[hidden]')) return;
-          if (r.height < 40) {
+          if (r.height < 44) {
             small.push(el.tagName.toLowerCase() + '["' +
               (el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 24) + '"]' +
               (el.className ? '.' + el.className.split(' ')[0] : '') + ' h=' + Math.round(r.height));
@@ -139,7 +177,7 @@ async function main() {
   }
 
   /* ---------------- 3. Intro: first visit ---------------------------------- */
-  console.log('\n[3] Signature intro — first visit');
+  console.log('\n[3] Signature intro - first visit, ~5s timeline');
   {
     const p = await newPage({ width: 390, height: 844 });
     await p.goto(base + '/', { waitUntil: 'domcontentloaded' });
@@ -147,56 +185,173 @@ async function main() {
     const t0 = Date.now();
     const seenEarly = await p.evaluate(() => {
       const el = document.getElementById('intro');
-      return el ? { present: true, visible: el.classList.contains('is-visible') } : { present: false };
+      return el ? { present: true, active: el.classList.contains('is-active') } : { present: false };
     });
     seenEarly.present
       ? pass('intro element present in DOM on load')
       : fail('intro element missing');
 
-    await new Promise((r) => setTimeout(r, 380));
-    await p.screenshot({ path: path.join(SHOTS, 'intro-390.png') });
+    /* The homepage must be built and laid out underneath the overlay. */
+    const underneath = await p.evaluate(() => {
+      const h1 = document.querySelector('h1');
+      return {
+        h1: h1 ? h1.textContent.trim().replace(/\s+/g, ' ').slice(0, 60) : null,
+        rendered: h1 ? h1.getBoundingClientRect().height > 0 : false,
+        sections: document.querySelectorAll('main section').length
+      };
+    });
+    underneath.rendered && underneath.sections >= 8
+      ? pass('homepage ready underneath the intro (' + underneath.sections + ' sections, H1 rendered)')
+      : fail('homepage not ready underneath the intro');
 
-    const mid = await p.evaluate(() => {
+    await new Promise((r) => setTimeout(r, 380));
+    await p.screenshot({ path: path.join(SHOTS, 'intro-390-1.png') });
+
+    const early = await p.evaluate(() => {
       const el = document.getElementById('intro');
       return {
-        visible: el && el.classList.contains('is-visible'),
-        opacity: el ? getComputedStyle(el).opacity : null,
-        name: el ? getComputedStyle(document.querySelector('.intro__name')).opacity : null,
+        active: el && el.classList.contains('is-active'),
         locked: document.body.classList.contains('is-locked')
       };
     });
-    mid.visible ? pass('intro revealed and animating (~380ms)') : fail('intro not revealed at 380ms');
-    mid.locked ? pass('scroll locked while intro is up') : fail('scroll not locked during intro');
+    early.active ? pass('intro active and animating (~380ms)') : fail('intro not active at 380ms');
+    early.locked ? pass('scroll locked while intro is up') : fail('scroll not locked during intro');
 
-    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 6000 });
+    /* 1-2s beat: name and role have arrived. */
+    await new Promise((r) => setTimeout(r, 1500));
+    const beat2 = await p.evaluate(() => {
+      const o = (s) => {
+        const el = document.querySelector(s);
+        return el ? parseFloat(getComputedStyle(el).opacity) : null;
+      };
+      return { name: o('.intro__name'), role: o('.intro__role') };
+    });
+    beat2.name > 0.9 && beat2.role > 0.9
+      ? pass('~1.9s: name and role fully revealed')
+      : fail('~1.9s: name/role not revealed (name=' + beat2.name + ' role=' + beat2.role + ')');
+
+    /* 2-4s beat: the statement is up. */
+    await new Promise((r) => setTimeout(r, 900));
+    const beat3 = await p.evaluate(() => {
+      const el = document.querySelector('.intro__statement');
+      const r = el.getBoundingClientRect();
+      return { opacity: parseFloat(getComputedStyle(el).opacity), width: r.width };
+    });
+    beat3.opacity > 0.9 && beat3.width > 0
+      ? pass('~2.8s: statement revealed and rendered')
+      : fail('~2.8s: statement not revealed (opacity=' + beat3.opacity + ')');
+    await p.screenshot({ path: path.join(SHOTS, 'intro-390-2.png') });
+
+    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 9000 });
     const elapsed = Date.now() - t0;
-    elapsed <= 2200
-      ? pass('intro removed from DOM after ' + elapsed + 'ms (target 1-2s)')
-      : fail('intro took ' + elapsed + 'ms — too slow');
+    elapsed >= 4200 && elapsed <= 6200
+      ? pass('intro removed from DOM after ' + elapsed + 'ms (target ~5s)')
+      : fail('intro took ' + elapsed + 'ms - expected roughly 5s');
 
     const after = await p.evaluate(() => {
       const h1 = document.querySelector('h1');
       const r = h1.getBoundingClientRect();
       return {
-        h1: h1.textContent.trim().slice(0, 40),
+        h1: h1.textContent.trim().replace(/\s+/g, ' ').slice(0, 60),
         heroVisible: r.width > 0 && r.height > 0 && r.top < window.innerHeight,
-        opacity: getComputedStyle(h1).opacity,
         locked: document.body.classList.contains('is-locked'),
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
       };
     });
-    after.heroVisible ? pass('hero H1 visible immediately after intro: "' + after.h1 + '…"') : fail('hero not visible after intro');
+    after.heroVisible ? pass('hero H1 visible immediately after intro: "' + after.h1 + '..."') : fail('hero not visible after intro');
     !after.locked ? pass('scroll lock released') : fail('scroll still locked after intro');
     await p.screenshot({ path: path.join(SHOTS, 'hero-390.png') });
     await p.close();
   }
 
-  /* ---------------- 4. Intro: repeat navigation in same session ------------ */
-  console.log('\n[4] Intro skipped on repeat navigation (same session)');
+  /* ---------------- 4. Intro skip control ---------------------------------- */
+  console.log('\n[4] Intro skip control (click, Escape, keyboard)');
+  {
+    const fresh = async () => {
+      const p = await newPage({ width: 1280, height: 900 });
+      await p.goto(base + '/', { waitUntil: 'domcontentloaded' });
+      return p;
+    };
+
+    /* Markup and accessibility shape. */
+    let p = await fresh();
+    const mark = await p.evaluate(() => {
+      const btn = document.querySelector('[data-intro-skip]');
+      if (!btn) return { present: false };
+      const hiddenAncestor = btn.closest('[aria-hidden="true"]');
+      const cs = getComputedStyle(btn);
+      return {
+        present: true,
+        tag: btn.tagName,
+        label: (btn.textContent || '').trim(),
+        hiddenAncestor: !!hiddenAncestor,
+        type: btn.getAttribute('type'),
+        minHeight: Math.round(btn.getBoundingClientRect().height)
+      };
+    });
+    mark.present ? pass('skip control present in markup') : fail('skip control missing');
+    mark.tag === 'BUTTON' ? pass('skip control is a real <button>') : fail('skip control is not a button');
+    /skip/i.test(mark.label) ? pass('skip control is labelled "' + mark.label + '"') : fail('skip control label unclear: ' + mark.label);
+    !mark.hiddenAncestor ? pass('skip control is NOT inside an aria-hidden subtree') : fail('skip control hidden from assistive tech');
+    mark.minHeight >= 44 ? pass('skip control meets the 44px touch target (' + mark.minHeight + 'px)') : fail('skip control too small: ' + mark.minHeight + 'px');
+
+    /* Becomes visible, then a click dismisses immediately. */
+    await new Promise((r) => setTimeout(r, 1100));
+    const vis = await p.evaluate(() => {
+      const btn = document.querySelector('[data-intro-skip]');
+      if (!btn) return null;
+      const cs = getComputedStyle(btn);
+      return { opacity: parseFloat(cs.opacity), visibility: cs.visibility };
+    });
+    vis && vis.opacity > 0.85 && vis.visibility === 'visible'
+      ? pass('skip control visible and interactive at ~1.2s')
+      : fail('skip control not visible at ~1.2s: ' + JSON.stringify(vis));
+
+    const tc = Date.now();
+    await p.click('[data-intro-skip]');
+    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 4000 });
+    const clickMs = Date.now() - tc;
+    clickMs < 1600
+      ? pass('click skips the intro in ' + clickMs + 'ms (no 5s wait)')
+      : fail('click took ' + clickMs + 'ms to skip');
+    await p.close();
+
+    /* Escape key. */
+    p = await fresh();
+    await new Promise((r) => setTimeout(r, 900));
+    await p.keyboard.press('Escape');
+    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 4000 });
+    const escUnlocked = await p.evaluate(() => !document.body.classList.contains('is-locked'));
+    escUnlocked ? pass('Escape key dismisses the intro and releases the scroll lock') : fail('Escape did not release the scroll lock');
+    await p.close();
+
+    /* Keyboard reachability: Tab from the top of the document.
+       First tab stop is the "skip to main content" link, second is the
+       intro skip control. */
+    p = await fresh();
+    await new Promise((r) => setTimeout(r, 700));
+    await p.keyboard.press('Tab');
+    await p.keyboard.press('Tab');
+    const focused = await p.evaluate(() => {
+      const el = document.activeElement;
+      return { sel: el ? (el.getAttribute('data-intro-skip') !== null ? 'skip' : el.className) : null };
+    });
+    focused.sel === 'skip'
+      ? pass('skip control reachable by keyboard (Tab, Tab)')
+      : fail('skip control not keyboard reachable, focus was on: ' + focused.sel);
+    await p.keyboard.press('Enter');
+    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 9000 });
+    const enterGone = await p.evaluate(() => !document.getElementById('intro'));
+    enterGone ? pass('Enter on the focused skip control dismisses the intro') : fail('Enter did not dismiss the intro');
+    await p.close();
+  }
+
+  /* ---------------- 5. Intro: repeat navigation in same session ------------ */
+  console.log('\n[5] Intro skipped on repeat navigation (same session)');
   {
     const p = await newPage({ width: 1280, height: 900 });
     await p.goto(base + '/', { waitUntil: 'domcontentloaded' });
-    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 6000 });
+    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 9000 });
     await p.goto(base + '/', { waitUntil: 'domcontentloaded' });
     await new Promise((r) => setTimeout(r, 120));
     const skipped = await p.evaluate(() => !document.getElementById('intro'));
@@ -207,34 +362,44 @@ async function main() {
 
     /* deep link with a hash */
     await p.evaluate(() => sessionStorage.removeItem('mb-intro-seen'));
-    await p.goto(base + '/#projects', { waitUntil: 'domcontentloaded' });
+    await p.goto(base + '/#work', { waitUntil: 'domcontentloaded' });
     await new Promise((r) => setTimeout(r, 120));
     const hashSkip = await p.evaluate(() => !document.getElementById('intro'));
-    hashSkip ? pass('deep link to /#projects skips the intro') : fail('intro forced on deep link');
+    hashSkip ? pass('deep link to /#work skips the intro') : fail('intro forced on deep link');
     await p.close();
   }
 
-  /* ---------------- 5. Reduced motion -------------------------------------- */
-  console.log('\n[5] prefers-reduced-motion: reduce');
+  /* ---------------- 7. Reduced motion -------------------------------------- */
+  console.log('\n[6] prefers-reduced-motion: reduce');
   {
     const p = await newPage({ width: 1280, height: 900, reducedMotion: true });
     await p.goto(base + '/', { waitUntil: 'domcontentloaded' });
     await new Promise((r) => setTimeout(r, 160));
     const spinning = await p.evaluate(() => {
-      const arc = document.querySelector('.intro__arc');
+      const mark = document.querySelector('.intro__mark');
       const bar = document.querySelector('.intro__progress');
+      const name = document.querySelector('.intro__name');
+      const skip = document.querySelector('[data-intro-skip]');
+      const g = (sel) => (sel ? getComputedStyle(sel).animationName : 'missing');
+      const vis = (sel) => (sel ? getComputedStyle(sel).visibility : 'missing');
       return {
-        arcAnim: getComputedStyle(arc).animationName,
-        barAnim: getComputedStyle(bar, '::after').animationName,
-        ringAnim: getComputedStyle(document.querySelector('.intro__ring-outer')).animationName
+        markAnim: g(mark),
+        barAnim: g(bar),
+        nameAnim: g(name),
+        nameOpacity: name ? parseFloat(getComputedStyle(name).opacity) : 0,
+        skipVisibility: vis(skip)
       };
     });
-    spinning.arcAnim === 'none' ? pass('orbital arc animation disabled') : fail('arc still animating: ' + spinning.arcAnim);
-    spinning.ringAnim === 'none' ? pass('outer ring spin disabled') : fail('ring still animating: ' + spinning.ringAnim);
+    spinning.markAnim === 'none' ? pass('monogram animation disabled') : fail('monogram still animating: ' + spinning.markAnim);
     spinning.barAnim === 'none' ? pass('progress sweep disabled') : fail('bar still animating: ' + spinning.barAnim);
+    spinning.nameAnim === 'none' ? pass('name reveal disabled') : fail('name still animating: ' + spinning.nameAnim);
+    spinning.nameOpacity > 0.9 ? pass('intro text immediately legible under reduced motion') : fail('intro text hidden under reduced motion: ' + spinning.nameOpacity);
+    spinning.skipVisibility === 'visible' ? pass('skip control still available under reduced motion') : fail('skip control hidden under reduced motion');
 
-    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 3000 });
-    pass('brand reveal completes quickly under reduced motion');
+    const t0r = Date.now();
+    await p.waitForFunction(() => !document.getElementById('intro'), { timeout: 4000 });
+    const reducedMs = Date.now() - t0r;
+    reducedMs < 2500 ? pass('brand reveal completes quickly under reduced motion (' + reducedMs + 'ms)') : fail('reduced-motion intro took ' + reducedMs + 'ms');
 
     const revealed = await p.evaluate(() => {
       const els = Array.from(document.querySelectorAll('[data-reveal]'));
@@ -247,8 +412,8 @@ async function main() {
     await p.close();
   }
 
-  /* ---------------- 6. No-JS fallback --------------------------------------- */
-  console.log('\n[6] JavaScript disabled');
+  /* ---------------- 7. No-JS fallback --------------------------------------- */
+  console.log('\n[7] JavaScript disabled');
   {
     const p = await newPage({ width: 390, height: 844, noJs: true });
     await p.goto(base + '/', { waitUntil: 'networkidle2' });
@@ -275,12 +440,12 @@ async function main() {
     await p.close();
   }
 
-  /* ---------------- 7. Mobile menu ------------------------------------------ */
-  console.log('\n[7] Mobile menu');
+  /* ---------------- 8. Mobile menu ------------------------------------------ */
+  console.log('\n[8] Mobile menu');
   {
     const p = await newPage({ width: 360, height: 780 });
     await p.goto(base + '/', { waitUntil: 'networkidle2' });
-    await new Promise((r) => setTimeout(r, 1900));
+    await settle(p);
 
     const collapsed = await p.evaluate(() => ({
       hidden: document.getElementById('primary-menu').hidden,
@@ -346,13 +511,13 @@ async function main() {
     await p.close();
   }
 
-  /* ---------------- 8. Navigation switches to horizontal at 56rem ---------- */
-  console.log('\n[8] Navigation breakpoint (mobile menu below 896px, bar at/above)');
+  /* ---------------- 9. Navigation switches to horizontal at 56rem ---------- */
+  console.log('\n[9] Navigation breakpoint (mobile menu below 896px, bar at/above)');
   {
     for (const w of [768, 896, 1024, 1280, 1440]) {
       const p = await newPage({ width: w, height: 900 });
       await p.goto(base + '/', { waitUntil: 'networkidle2' });
-      await new Promise((r) => setTimeout(r, 1900));
+      await settle(p);
       const d = await p.evaluate(() => {
         const menu = document.getElementById('primary-menu');
         const toggle = document.querySelector('.js-nav-toggle');
@@ -389,12 +554,12 @@ async function main() {
     }
   }
 
-  /* ---------------- 9. Contact form validation ----------------------------- */
-  console.log('\n[9] Contact form validation');
+  /* ---------------- 10. Contact form validation ----------------------------- */
+  console.log('\n[10] Contact form validation');
   {
     const p = await newPage({ width: 390, height: 844 });
     await p.goto(base + '/', { waitUntil: 'networkidle2' });
-    await new Promise((r) => setTimeout(r, 1900));
+    await settle(p);
 
     const action = await p.evaluate(() => {
       const f = document.getElementById('contact-form');
@@ -412,9 +577,7 @@ async function main() {
       r.continue();
     });
 
-    await p.evaluate(() => document.getElementById('contact-form').scrollIntoView());
-    await new Promise((r) => setTimeout(r, 400));
-    await p.click('#contact-form button[type="submit"]');
+    await clickSafely(p, '#contact-form button[type="submit"]');
     await new Promise((r) => setTimeout(r, 500));
 
     const invalid = await p.evaluate(() => ({
@@ -437,7 +600,7 @@ async function main() {
     await p.type('#cf-email', 'not-an-email');
     await p.type('#cf-message', 'This is a sufficiently long project description for validation.');
     await p.select('#cf-type', 'Business website');
-    await p.click('#contact-form button[type="submit"]');
+    await clickSafely(p, '#contact-form button[type="submit"]');
     await new Promise((r) => setTimeout(r, 500));
     const emailErr = await p.evaluate(() => {
       const e = document.querySelector('#cf-email');
@@ -464,12 +627,12 @@ async function main() {
     await p.close();
   }
 
-  /* ---------------- 10. Keyboard accessibility ----------------------------- */
-  console.log('\n[10] Keyboard access');
+  /* ---------------- 11. Keyboard accessibility ----------------------------- */
+  console.log('\n[11] Keyboard access');
   {
     const p = await newPage({ width: 1280, height: 900 });
     await p.goto(base + '/', { waitUntil: 'networkidle2' });
-    await new Promise((r) => setTimeout(r, 1900));
+    await settle(p);
 
     await p.keyboard.press('Tab');
     await new Promise((r) => setTimeout(r, 450)); /* let the reveal transition finish */
@@ -505,8 +668,8 @@ async function main() {
     await p.close();
   }
 
-  /* ---------------- 11. Case study pages ----------------------------------- */
-  console.log('\n[11] Case study pages');
+  /* ---------------- 12. Case study pages ----------------------------------- */
+  console.log('\n[12] Case study pages');
   {
     for (const [route, w] of [['/projects/savory-bites.html', 390], ['/projects/pp-studio.html', 390],
       ['/projects/johnsons-academy.html', 390], ['/projects/savory-bites.html', 1280]]) {
@@ -531,8 +694,125 @@ async function main() {
     }
   }
 
-  /* ---------------- 12. Broken link sweep on live URLs --------------------- */
-  console.log('\n[12] External project links');
+  /* ---------------- 13. Brief compliance ----------------------------------- */
+  console.log('\n[13] Brief compliance: nav, order, closing CTA, footer, skills');
+  {
+    const p = await newPage({ width: 1280, height: 900 });
+    await p.goto(base + '/', { waitUntil: 'networkidle2' });
+    await new Promise((r) => setTimeout(r, 600));
+
+    const r = await p.evaluate(() => {
+      const text = (s) => {
+        const el = document.querySelector(s);
+        return el ? el.textContent.trim().replace(/\s+/g, ' ') : null;
+      };
+      const navLinks = Array.from(document.querySelectorAll('.nav__list .nav__link'))
+        .map((a) => a.textContent.trim());
+      const order = Array.from(document.querySelectorAll('main > section, main > .closing'))
+        .map((s) => s.id || s.className.split(' ')[0]);
+      const skills = Array.from(document.querySelectorAll('.skill-group__title'))
+        .map((h) => h.textContent.trim());
+      return {
+        navLinks,
+        navCta: text('.nav__cta .btn'),
+        h1: text('h1'),
+        heroLead: text('.hero__lead'),
+        order,
+        skills,
+        skillBars: document.querySelectorAll('.skill-bar, .skill__bar, progress, meter').length,
+        serviceRows: document.querySelectorAll('.service-row').length,
+        workItems: document.querySelectorAll('.work__item').length,
+        workLayouts: Array.from(document.querySelectorAll('.work__item'))
+          .map((el) => Array.from(el.classList).find((c) => /^work__item--/.test(c)) || 'none'),
+        closingTitle: text('.closing__title'),
+        closingText: text('.closing__text'),
+        closingCta: text('.closing__actions .btn'),
+        footerLinks: document.querySelectorAll('.site-footer a').length,
+        footerHasMark: !!document.querySelector('.footer__mark'),
+        footerHasName: !!document.querySelector('.footer__name'),
+        footerHasCopy: !!document.querySelector('.footer__copy'),
+        footerSocial: document.querySelectorAll('.footer__social .footer__icon').length,
+        grain: (() => {
+          const cs = getComputedStyle(document.body, '::after');
+          return cs.backgroundImage.indexOf('data:image/svg+xml') !== -1;
+        })(),
+        darkSections: Array.from(document.querySelectorAll('main > section, main > .closing'))
+          .map((s) => {
+            const c = getComputedStyle(s).backgroundColor;
+            const m = c.match(/\d+/g);
+            if (!m) return 1;
+            const lum = (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255;
+            return lum;
+          })
+      };
+    });
+
+    const wantNav = ['Work', 'About', 'Services', 'Contact'];
+    JSON.stringify(r.navLinks) === JSON.stringify(wantNav)
+      ? pass('nav is exactly ' + wantNav.join(', '))
+      : fail('nav links are ' + JSON.stringify(r.navLinks) + ', expected ' + JSON.stringify(wantNav));
+
+    /Let/.test(r.navCta || '') ? pass('nav CTA present: "' + r.navCta + '"') : fail('nav CTA missing');
+
+    /I build digital experiences that bring ideas to life\./i.test(r.h1 || '')
+      ? pass('H1 matches the brief: "' + r.h1 + '"')
+      : fail('H1 is "' + r.h1 + '"');
+
+    r.h1.length < 120 && r.heroLead
+      ? pass('hero value statement is concise (' + r.h1.length + ' char headline)')
+      : fail('hero copy too long: ' + (r.h1 || '').length + ' chars');
+
+    const wantOrder = ['home', 'about', 'services', 'work', 'skills', 'process', 'contact', 'closing'];
+    JSON.stringify(r.order) === JSON.stringify(wantOrder)
+      ? pass('section order: ' + r.order.join(' -> '))
+      : fail('section order is ' + JSON.stringify(r.order) + ', expected ' + JSON.stringify(wantOrder));
+
+    r.skillBars === 0
+      ? pass('no proficiency bars or meters anywhere in Skills')
+      : fail(r.skillBars + ' proficiency indicator(s) found - brief forbids them');
+    r.skills.length === 3
+      ? pass('skills grouped as ' + r.skills.join(' / '))
+      : fail('expected 3 skill groups, found ' + JSON.stringify(r.skills));
+
+    r.serviceRows === 3
+      ? pass('services presented as ' + r.serviceRows + ' numbered editorial rows')
+      : fail('expected 3 service rows, found ' + r.serviceRows);
+
+    r.workItems === 3 ? pass('3 real projects shown') : fail('expected 3 projects, found ' + r.workItems);
+    new Set(r.workLayouts).size === 3
+      ? pass('project layouts are varied: ' + r.workLayouts.join(', '))
+      : fail('project layouts are not varied: ' + r.workLayouts.join(', '));
+
+    /Have a project in mind\?/i.test(r.closingTitle || '')
+      ? pass('closing CTA headline: "' + r.closingTitle + '"')
+      : fail('closing CTA headline is "' + r.closingTitle + '"');
+    /thoughtful digital experience/i.test(r.closingText || '')
+      ? pass('closing CTA line: "' + r.closingText + '"')
+      : fail('closing CTA line is "' + r.closingText + '"');
+    /Let/.test(r.closingCta || '')
+      ? pass('closing CTA button: "' + r.closingCta + '"')
+      : fail('closing CTA button is "' + r.closingCta + '"');
+
+    r.footerHasMark && r.footerHasName && r.footerHasCopy && r.footerSocial === 3
+      ? pass('footer is minimal: mark, name, copyright, ' + r.footerSocial + ' social icons')
+      : fail('footer incomplete: mark=' + r.footerHasMark + ' name=' + r.footerHasName +
+        ' copy=' + r.footerHasCopy + ' social=' + r.footerSocial);
+    r.footerLinks === 4
+      ? pass('footer carries no extra navigation (' + r.footerLinks + ' links: brand + 3 social)')
+      : fail('footer has ' + r.footerLinks + ' links - expected only brand + 3 social');
+
+    r.grain ? pass('subtle grain/texture layer present') : fail('grain texture layer missing');
+
+    const dark = r.darkSections.filter((l) => l < 0.5).length;
+    dark >= r.darkSections.length * 0.6
+      ? pass('most sections read dark: ' + dark + ' of ' + r.darkSections.length + ' below 50% luminance')
+      : fail('only ' + dark + ' of ' + r.darkSections.length + ' sections are dark');
+
+    await p.close();
+  }
+
+  /* ---------------- 14. Broken link sweep on live URLs --------------------- */
+  console.log('\n[14] External project links');
   {
     const p = await newPage({ width: 1280, height: 900 });
     await p.goto(base + '/', { waitUntil: 'networkidle2' });
