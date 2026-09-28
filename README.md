@@ -202,8 +202,8 @@ and inventing one would put a dead contact route in front of clients. See
 
 ## Author
 
-**Mohamed Bangura** — frontend developer, Information Technology student at
-IPAM, Sierra Leone.
+**Mohamed Bangura** — Frontend Web Developer & Digital Creative, Information
+Technology student at IPAM, Sierra Leone.
 
 - Email: <prosperbangura9@gmail.com>
 - LinkedIn: <https://www.linkedin.com/in/mohamed-bangura-699253389>

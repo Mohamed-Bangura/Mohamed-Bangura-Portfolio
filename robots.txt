@@ -1,4 +1,4 @@
-# Mohamed Bangura — Frontend Developer Portfolio
+# Mohamed Bangura — Frontend Web Developer & Digital Creative
 # https://mohamed-bangura-portfolio.vercel.app/
 
 User-agent: *
