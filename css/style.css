@@ -948,6 +948,12 @@ code {
   border-top: 1px solid var(--line);
 }
 
+.work__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .work__more { margin: clamp(3rem, 6vw, 4.5rem) 0 0; }
 
 /* ------------------------------------------------------------------ skills */
@@ -1314,6 +1320,8 @@ select.form__control {
   .work__item--a .work__media { aspect-ratio: 16 / 9; }
   .work__item--b, .work__item--c { grid-template-columns: 1fr 1fr; }
   .work__item--b .work__media, .work__item--c .work__media { aspect-ratio: 4 / 3; }
+  .work__item--a .work__media--screen,
+  .work__item--b .work__media--screen { aspect-ratio: 2 / 1; }
   .process__step { grid-template-columns: 4rem 1fr; column-gap: 1.5rem; }
   .process__num { grid-row: 1 / span 2; }
   .case__nav { grid-template-columns: 1fr 1fr; }
@@ -1363,6 +1371,8 @@ select.form__control {
   .work__item--c { grid-template-columns: 1.15fr 0.85fr; }
   .work__item--c .work__body { order: 2; }
   .work__item--c .work__media { order: 1; }
+  .work__item--a .work__media--screen,
+  .work__item--b .work__media--screen { aspect-ratio: 2 / 1; }
 }
 
 @media (max-width: 55.99rem) {

@@ -778,7 +778,7 @@ async function main() {
       ? pass('services presented as ' + r.serviceRows + ' numbered editorial rows')
       : fail('expected 3 service rows, found ' + r.serviceRows);
 
-    r.workItems === 3 ? pass('3 real projects shown') : fail('expected 3 projects, found ' + r.workItems);
+    r.workItems === 5 ? pass('5 real projects shown') : fail('expected 5 projects, found ' + r.workItems);
     new Set(r.workLayouts).size === 3
       ? pass('project layouts are varied: ' + r.workLayouts.join(', '))
       : fail('project layouts are not varied: ' + r.workLayouts.join(', '));

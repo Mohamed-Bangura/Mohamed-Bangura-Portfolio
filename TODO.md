@@ -61,7 +61,7 @@
       are verified, but no message has been confirmed arriving in the inbox.
 
 ### Content
-- [ ] Add a fourth project when there is a fourth finished, publicly viewable
+- [ ] Add a sixth project when there is a sixth finished, publicly viewable
       site. Do not pad the grid with half-finished work.
 - [ ] Write the case studies in first person with concrete outcomes, and add
       real numbers once they exist

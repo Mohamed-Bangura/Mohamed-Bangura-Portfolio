@@ -43,7 +43,7 @@ Audited against the current build. Canonical domain:
 
 - [x] `Person` — name, job title, email, `sameAs` profiles, `knowsAbout`
 - [x] `WebSite` with `SearchAction`
-- [x] `ItemList` of the three projects, each with its live URL and repository
+- [x] `ItemList` of the five featured projects with their live destinations
 - [x] `BreadcrumbList` on each case study
 - [ ] **Verify in the Rich Results Test.** The JSON-LD parses and the ids
       resolve, but it has not been checked against Google's validator.

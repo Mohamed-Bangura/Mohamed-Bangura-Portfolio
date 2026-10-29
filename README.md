@@ -37,6 +37,9 @@ ships to the browser.
 | `projects/johnsons-academy.html` | Case study: training-provider site |
 | `404.html` | Branded error page, `noindex` |
 
+The homepage also features PP Studio Real Estate and REACH-SL with their live
+demos, source repositories, and supplied project screenshots.
+
 ## Project structure
 
 ```
@@ -51,7 +54,7 @@ ships to the browser.
 ├── js/script.js
 ├── images/
 │   ├── profile/          responsive WebP portrait (320/560/800)
-│   ├── projects/         responsive WebP screenshots
+│   ├── projects/         responsive WebP screenshots and supplied PNG captures
 │   ├── logo/             WebP mark at 96 and 192
 │   ├── og-image.png      1200x630 social preview
 │   └── og-image.jpg      JPEG fallback for older crawlers
@@ -109,7 +112,7 @@ rather than decoration:
 - A burgundy-to-gold accent range, used sparingly.
 - A fixed film-grain layer over the whole page, at very low opacity.
 - Cards are the exception, not the default. Services and process are editorial
-  rows separated by hairlines; the three projects use three different layouts so
+  rows separated by hairlines; the five projects use three different layouts so
   the work section does not read as a card grid.
 - A decorative `MB` watermark in the hero is drawn with a text stroke and a
   transparent fill, so the contrast audit correctly ignores it.

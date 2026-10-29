@@ -101,6 +101,32 @@
           "position": 1,
           "item": {
             "@type": "CreativeWork",
+            "name": "PP Studio Real Estate",
+            "url": "https://pp-studio-real-estate.vercel.app/",
+            "image": "https://mohamed-bangura-portfolio.vercel.app/images/projects/pp%20studio%20agency%20real%20estate.png",
+            "creator": { "@id": "https://mohamed-bangura-portfolio.vercel.app/#person" },
+            "keywords": "real estate, property listings, responsive web application",
+            "programmingLanguage": ["TypeScript", "JavaScript"]
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "CreativeWork",
+            "name": "REACH-SL",
+            "url": "https://reachsl.vercel.app/",
+            "image": "https://mohamed-bangura-portfolio.vercel.app/images/projects/reach%20sl.png",
+            "creator": { "@id": "https://mohamed-bangura-portfolio.vercel.app/#person" },
+            "keywords": "social impact, community awareness, Sierra Leone",
+            "programmingLanguage": ["JavaScript"]
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "CreativeWork",
             "name": "Savory Bites Restaurant",
             "url": "https://mohamed-bangura-portfolio.vercel.app/projects/savory-bites.html",
             "image": "https://mohamed-bangura-portfolio.vercel.app/images/projects/savory-bites-1200.webp",
@@ -111,7 +137,7 @@
         },
         {
           "@type": "ListItem",
-          "position": 2,
+          "position": 4,
           "item": {
             "@type": "CreativeWork",
             "name": "PP Studio Agency",
@@ -124,7 +150,7 @@
         },
         {
           "@type": "ListItem",
-          "position": 3,
+          "position": 5,
           "item": {
             "@type": "CreativeWork",
             "name": "Johnson's Academy",
@@ -428,12 +454,66 @@
         <p class="eyebrow">Selected work</p>
         <h2 id="work-title">Projects built to be used, not just admired</h2>
         <p class="lead">
-          Three real projects, each live and publicly viewable. Every case study
-          explains what the site had to do, and what I actually built.
+          Five live projects spanning real estate, social impact, hospitality,
+          digital services and education. Explore the work and its source code.
         </p>
       </div>
 
       <div class="work__list">
+
+        <!-- Layout A: wide image, text beneath -->
+        <article class="work__item work__item--a" data-reveal>
+          <a class="work__media work__media--screen" href="https://pp-studio-real-estate.vercel.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+            <img src="images/projects/pp studio agency real estate.png"
+                 width="1907" height="950" loading="lazy" decoding="async"
+                 alt="PP Studio Real Estate homepage showing property listings and its property discovery interface">
+          </a>
+          <div class="work__body">
+            <p class="work__meta"><span class="work__index">01</span> Real estate / web development</p>
+            <h3 class="work__title"><a href="https://pp-studio-real-estate.vercel.app/" target="_blank" rel="noopener noreferrer">PP Studio Real Estate</a></h3>
+            <p class="work__desc">
+              A modern property-discovery experience with listings and individual
+              property details, tailored to the Sierra Leone market.
+            </p>
+            <ul class="work__stack" aria-label="Technologies used">
+              <li class="chip">Next.js</li>
+              <li class="chip">React</li>
+              <li class="chip">TypeScript</li>
+              <li class="chip">Tailwind CSS</li>
+            </ul>
+            <ul class="work__links">
+              <li><a class="text-link" href="https://pp-studio-real-estate.vercel.app/" target="_blank" rel="noopener noreferrer">Live Demo</a></li>
+              <li><a class="text-link" href="https://github.com/Mohamed-Bangura/PP-Studio-Real-Estate" target="_blank" rel="noopener noreferrer">View Source Code</a></li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Layout B: text left, image right -->
+        <article class="work__item work__item--b" data-reveal>
+          <div class="work__body">
+            <p class="work__meta"><span class="work__index">02</span> Social impact / web development</p>
+            <h3 class="work__title"><a href="https://reachsl.vercel.app/" target="_blank" rel="noopener noreferrer">REACH-SL</a></h3>
+            <p class="work__desc">
+              A Sierra Leone-focused platform for community awareness and
+              engagement. “We De reach we de uplift” reflects its message of
+              reaching communities and promoting a better future.
+            </p>
+            <ul class="work__stack" aria-label="Technologies used">
+              <li class="chip">Next.js</li>
+              <li class="chip">React</li>
+              <li class="chip">Tailwind CSS</li>
+            </ul>
+            <ul class="work__links">
+              <li><a class="text-link" href="https://reachsl.vercel.app/" target="_blank" rel="noopener noreferrer">Live Demo</a></li>
+              <li><a class="text-link" href="https://github.com/Mohamed-Bangura/REACH-SL" target="_blank" rel="noopener noreferrer">View Source Code</a></li>
+            </ul>
+          </div>
+          <a class="work__media work__media--screen" href="https://reachsl.vercel.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+            <img src="images/projects/reach sl.png"
+                 width="1853" height="945" loading="lazy" decoding="async"
+                 alt="REACH-SL homepage showing its community-focused message, “We De reach we de uplift”">
+          </a>
+        </article>
 
         <!-- Layout A: wide image, text beneath -->
         <article class="work__item work__item--a" data-reveal>
@@ -445,7 +525,7 @@
                  alt="Homepage of the Savory Bites restaurant website, showing the hero section and featured dishes">
           </a>
           <div class="work__body">
-            <p class="work__meta"><span class="work__index">01</span> Restaurant</p>
+            <p class="work__meta"><span class="work__index">03</span> Restaurant</p>
             <h3 class="work__title"><a href="projects/savory-bites.html">Savory Bites</a></h3>
             <p class="work__desc">
               A five-page restaurant website with a full menu, gallery, about and
@@ -468,7 +548,7 @@
         <!-- Layout B: text left, image right -->
         <article class="work__item work__item--b" data-reveal>
           <div class="work__body">
-            <p class="work__meta"><span class="work__index">02</span> Digital agency</p>
+            <p class="work__meta"><span class="work__index">04</span> Digital agency</p>
             <h3 class="work__title"><a href="projects/pp-studio.html">PP Studio Agency</a></h3>
             <p class="work__desc">
               A six-page agency site &mdash; home, about, services, portfolio, pricing
@@ -505,7 +585,7 @@
                  alt="Homepage of the Johnson's Academy digital skills training website, showing the hero banner and course areas">
           </a>
           <div class="work__body">
-            <p class="work__meta"><span class="work__index">03</span> Education</p>
+            <p class="work__meta"><span class="work__index">05</span> Education</p>
             <h3 class="work__title"><a href="projects/johnsons-academy.html">Johnson&rsquo;s Academy</a></h3>
             <p class="work__desc">
               A digital skills training provider&rsquo;s site, with six clearly separated
