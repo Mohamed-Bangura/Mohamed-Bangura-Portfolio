@@ -460,7 +460,8 @@
 
         /* Honeypot: a real visitor never sees or fills this. */
         var hp = form.querySelector('input[name="_hp"]');
-        if (hp && hp.value) return;
+        var botcheck = form.querySelector('input[name="botcheck"]');
+        if ((hp && hp.value) || (botcheck && botcheck.checked)) return;
 
         var firstBad = null;
         $$('.form__control', form).forEach(function (input) {
